@@ -2,9 +2,70 @@
 
 ## ls
 
+## cat
+파일 내용 출력
+```
+#include <stdio.h>
+
+int main(int argc, char *argv[])
+{
+FILE *fp;
+int c;
+
+if (argc < 2) fp = stdin; // 명령줄 인수가 없으면 표준입력 사용
+else fp = fopen(argv[1],"r"); // 읽기 전용으로 파일 열기
+
+c = getc(fp); // 파일로부터 문자 읽기
+
+while (c != EOF) { // 파일끝이 아니면
+putc(c, stdout); // 읽은 문자를 표준출력에 출력
+c = getc(fp); // 파일로부터 문자 읽기
+}
+
+fclose(fp);
+return 0;
+}
+```
+![image](https://github.com/imeline/sys_linux_command/assets/128706341/ba8da782-5d75-403e-a7bd-ebdb0673cbb1)
+---
+
+## cp
+파일 복사
+```
+#include <stdio.h>
+
+int main(int argc, char *argv[])
+{
+
+char c;
+FILE *fp1, *fp2;
+
+if (argc !=3) { //오류
+fprintf(stderr, "사용법: %s 파일1 파일2\n", argv[0]);
+//fprintf() = 파일에 출력
+///stderr = 표준 오류에 대한 FILE 포인터
+return 1;
+}
+
+fp1 = fopen(argv[1], "r");
+if (fp1 == NULL) { //오류
+fprintf(stderr, "파일 %s 열기 오류\n", argv[1]);
+return 2;
+}
+
+fp2 = fopen(argv[2], "w");
+while ((c = fgetc(fp1)) != EOF) fputc(c, fp2);
+//파일을 문자 단위로 읽고 씀
+fclose(fp1);
+fclose(fp2);
+return 0;
+}
+```
+![image](https://github.com/imeline/sys_linux_command/assets/128706341/e6c53123-4962-465d-9900-b3234f39e201)
+---
 
 ## ln
-(링크 = 기존 파일에 대한 또 다른 이름의 파일 생성)
+(링크 = 기존 파일에 대한 또 다른 이름의 파일 생성) <br>
 하드링크(같은 i-node 가지게끔)
 ```
 #include <unistd.h>
