@@ -4,8 +4,9 @@
 
 
 ## ln
+(링크 = 기존 파일에 대한 또 다른 이름의 파일 생성)
+하드링크(같은 i-node 가지게끔)
 ```
-//하드링크(같은 i-node 가지게끔)
 #include <unistd.h>
 #include <stdlib.h>
 int main(int argc, char *argv[ ])
@@ -21,8 +22,8 @@ exit(0);
 ---
 
 ## ln -s
+소프트링크(원본파일의 주소 링크)
 ```
-//소프트링크(원본파일의 주소 링크)
 #include <unistd.h>
 #include <stdlib.h>
 
@@ -64,12 +65,13 @@ utime(argv[1], NULL);
 ---
 
 ## chmod
+파일 접근권한을 변경
 ```
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <stdio.h>
 #include <stdlib.h>
-/* 파일 접근권한을 변경한다. */
+
 int main(int argc, char *argv[])
 {
 long strtol( ); //문자열 long으로 변환
@@ -84,3 +86,46 @@ exit(0);
 }
 ```
 ![image](https://github.com/imeline/sys_linux_command/assets/128706341/84b34ab7-5742-4023-9bbb-b2f853a5e57e)
+---
+
+## file
+파일 타입 확인 
+```
+#include <sys/types.h> 
+#include <sys/stat.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+int main(int argc, char *argv[])
+{ 
+int i;
+struct stat buf; //파일 정보를 저장하는 구조체
+for (i = 1; i < argc; i++) {
+printf("%s: ", argv[i]);
+
+if (lstat(argv[i], &buf) < 0) { //buf에 파일에 대한 정보를 담음
+perror("lstat()"); 
+continue;
+}
+
+if (S_ISREG(buf.st_mode)) //st_mode - 파일의 모드를 다룸
+printf("%s \n", "일반 파일");
+if (S_ISDIR(buf.st_mode)) 
+printf("%s \n", "디렉터리");
+if (S_ISCHR(buf.st_mode)) 
+printf("%s \n", "문자 장치 파일");
+if (S_ISBLK(buf.st_mode)) 
+printf("%s \n", "블록 장치 파일");
+if (S_ISFIFO(buf.st_mode)) 
+printf("%s \n", "FIFO 파일");
+if (S_ISLNK(buf.st_mode)) 
+printf("%s \n", "심볼릭 링크");
+if (S_ISSOCK(buf.st_mode)) 
+printf("%s \n", "소켓");
+}
+exit(0);
+}
+```
+![image](https://github.com/imeline/sys_linux_command/assets/128706341/1c145e34-93c2-44db-9e6b-75593fc4b90b)
+---
