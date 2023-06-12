@@ -223,3 +223,190 @@ exit(0);
 ```
 ![image](https://github.com/imeline/sys_linux_command/assets/128706341/1c145e34-93c2-44db-9e6b-75593fc4b90b)
 
+## sleep
+지정된 시간 동안 프로그램 실행을 유예(기본 값:초 단위)
+```
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+int main(int argc, char* argv[]) {
+    if (argc < 2) {
+        printf("사용법: %s 초\n", argv[0]);
+        exit(1);
+    }
+
+    unsigned int seconds = atoi(argv[1]); //정수형으로 변환
+
+    printf("프로그램을 일시 중지합니다.\n");
+    sleep(seconds);
+    printf("프로그램이 다시 실행됩니다.\n");
+
+    return 0;
+}
+```
+![image](https://github.com/imeline/sys_linux_command/assets/128706341/5e1eb519-1866-4638-b24a-dd8753f6700e)
+
+## mkdir
+디렉토리 생성
+```
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        printf("Usage: %s <directory>\n", argv[0]);
+        return 1;
+    }
+
+    if (mkdir(argv[1], 0755) == 0) { //0755 = 소유자에게 읽기, 쓰기 및 실행 권한을 부여하고, 그룹 및 기타 사용자에게는 읽기 및 실행 권한을 부여
+        printf("Directory '%s' successfully created.\n", argv[1]);
+        return 0;
+    } else {
+        printf("Error creating directory '%s'.\n", argv[1]);
+        return 1;
+    }
+}
+```
+![image](https://github.com/imeline/sys_linux_command/assets/128706341/cba2e104-dddf-47bb-939f-36685b574687)
+
+## rmdir
+디렉토리 삭제
+```
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        printf("Usage: %s <directory>\n", argv[0]);
+        return 1;
+    }
+
+    if (rmdir(argv[1]) == 0) {
+        printf("Directory '%s' successfully removed.\n", argv[1]);
+        return 0;
+    } else {
+        printf("Error removing directory '%s'.\n", argv[1]);
+        return 1;
+    }
+}
+```
+![image](https://github.com/imeline/sys_linux_command/assets/128706341/f887e78b-7184-48bd-bc38-d189b8ba8251)
+
+## pwd
+현재 디렉토리의 절대경로 
+```
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+int main() {
+    char cwd[1024];
+    
+    if (getcwd(cwd, sizeof(cwd)) != NULL) {
+        //cwd에 현재 작업 디렉토리의 절대경로 저장 
+        printf("현재 작업 디렉토리: %s\n", cwd);
+    } else {
+        printf("현재 작업 디렉토리를 얻어오는데 실패했습니다.\n");
+    }
+    
+    return 0;
+}
+```
+![image](https://github.com/imeline/sys_linux_command/assets/128706341/d1c184d1-93f9-43d5-a3db-25417459e08a)
+
+## rm
+파일 삭제
+```
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        printf("Usage: %s <file>\n", argv[0]);
+        return 1;
+    }
+
+    if (unlink(argv[1]) == 0) { 
+        //unlink 함수 대신 remove도 사용가능 하지만 remove는 디렉토리도 삭제 가능하기 때문에 unlink를 사용 
+        printf("File '%s' successfully removed.\n", argv[1]);
+        return 0;
+    } else {
+        printf("Error removing file '%s'.\n", argv[1]);
+        return 1;
+    }
+}
+```
+![image](https://github.com/imeline/sys_linux_command/assets/128706341/d6006f52-6bda-478e-95db-33fc8c242450)
+
+## uname
+시스템 정보를 출력
+```
+#include <stdio.h>
+#include <sys/utsname.h>
+
+void print_os_info() {
+    struct utsname os_info; //시스템 정보를 확인하는 함수 제공
+
+    if (uname(&os_info) == -1) {
+        printf("Error getting OS information.\n");
+        return;
+    }
+
+    printf("%s\n", os_info.sysname);
+}
+
+int main() {
+    print_os_info();
+    return 0;
+}
+```
+![image](https://github.com/imeline/sys_linux_command/assets/128706341/8595c2cc-7fea-4688-9298-eca07d9c91fc)
+
+## uname -n
+시스템이나 네트워크 노드의 이름 출력
+```
+#include <stdio.h>
+#include <sys/utsname.h>
+
+int main() {
+    struct utsname os_info;
+
+    if (uname(&os_info) == -1) {
+        printf("Error getting OS information.\n");
+        return 1;
+    }
+
+    printf("%s\n", os_info.nodename);
+    //시스템의 이름이나 네트워크 노드의 이름 
+    //지금은 시스템이 네트웨크에 연결되있기 때문에 시스템 이름
+
+    return 0;
+}
+```
+![image](https://github.com/imeline/sys_linux_command/assets/128706341/343c5a44-20d6-4166-bed7-2582d279260b)
+
+## uname -r
+커널의 릴리즈 버전을 출력
+- 커널의 새로운 기능, 버그 수정, 보안 패치 등이 포함된 최신 버전을 확인하고 적용할 수 있다.
+```
+#include <stdio.h>
+#include <sys/utsname.h>
+
+int main() {
+    struct utsname os_info;
+
+    if (uname(&os_info) == -1) {
+        printf("Error getting OS information.\n");
+        return 1;
+    }
+
+    printf("%s\n", os_info.release);
+
+    return 0;
+}
+```
+![image](https://github.com/imeline/sys_linux_command/assets/128706341/ec00476d-f63a-46c3-91b8-3146a3385b69)
