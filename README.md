@@ -27,7 +27,40 @@ return 0;
 }
 ```
 ![image](https://github.com/imeline/sys_linux_command/assets/128706341/ba8da782-5d75-403e-a7bd-ebdb0673cbb1)
----
+
+## cat -n
+파일에 행 번호 붙여 프린트(공백 줄 포함)
+```
+#include <stdio.h>
+#include <stdlib.h>
+#define MAXLINE 80
+
+int main(int argc, char *argv[])
+{
+FILE *fp;
+int line = 0;
+char buffer[MAXLINE];
+
+if (argc != 2) { //오류
+fprintf(stderr, "사용법:line 파일이름\n");
+exit(1);
+}
+
+if ( (fp = fopen(argv[1],"r")) == NULL) //오류
+{
+    fprintf(stderr, "파일 열기 오류\n");
+    exit(2);
+}
+
+while (fgets(buffer, MAXLINE, fp) != NULL) { // 한 줄 읽기
+    //fp에서 줄이 끝날 때 까지 최대 MAXLINE-1개의 문자를 읽어 buffer에 저장 
+    line++;
+    printf("%3d %s", line, buffer); 
+    }
+    exit(0);
+}
+```
+![image](https://github.com/imeline/sys_linux_command/assets/128706341/5cd32ea0-7293-4cb5-abff-53d5afde3801)
 
 ## cp
 파일 복사
@@ -62,7 +95,7 @@ return 0;
 }
 ```
 ![image](https://github.com/imeline/sys_linux_command/assets/128706341/e6c53123-4962-465d-9900-b3234f39e201)
----
+
 
 ## ln
 (링크 = 기존 파일에 대한 또 다른 이름의 파일 생성) <br>
@@ -80,7 +113,7 @@ exit(0);
 }
 ```
 ![image](https://github.com/imeline/sys_linux_command/assets/128706341/173ee28d-b8bc-4206-a483-49f6675eae97)
----
+
 
 ## ln -s
 소프트링크(원본파일의 주소 링크)
@@ -98,7 +131,7 @@ exit(0);
 ```
 
 ![image](https://github.com/imeline/sys_linux_command/assets/128706341/8fe7cb07-72a8-4bb7-ba73-7c82b76329a3)
----
+
 
 ## touch
 파일 시간 정보 변경
@@ -123,7 +156,7 @@ utime(argv[1], NULL);
 /// touch -r oldfile newfile => 다른파일 시간으로 변경
 ```
 ![image](https://github.com/imeline/sys_linux_command/assets/128706341/6ca3ae00-9b9a-4d8d-851b-7aaf9d89b9d0)
----
+
 
 ## chmod
 파일 접근권한을 변경
@@ -147,7 +180,7 @@ exit(0);
 }
 ```
 ![image](https://github.com/imeline/sys_linux_command/assets/128706341/84b34ab7-5742-4023-9bbb-b2f853a5e57e)
----
+
 
 ## file
 파일 타입 확인 
@@ -189,4 +222,4 @@ exit(0);
 }
 ```
 ![image](https://github.com/imeline/sys_linux_command/assets/128706341/1c145e34-93c2-44db-9e6b-75593fc4b90b)
----
+
