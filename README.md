@@ -343,70 +343,69 @@ int main(int argc, char *argv[]) {
 ![image](https://github.com/imeline/sys_linux_command/assets/128706341/d6006f52-6bda-478e-95db-33fc8c242450)
 
 ## uname
-시스템 정보를 출력
+- [옵션 x, -o] : 시스템 정보를 출력
+- [-n] : 시스템이나 네트워크 노드의 이름 출력
+- [-r] : 커널의 릴리즈 버전을 출력
+ (커널의 새로운 기능, 버그 수정, 보안 패치 등이 포함된 최신 버전을 확인하고 적용할 수 있다.)
+- [-v] : 커널 버전 출력
+- [-m] : 시스템의 하드웨어 타입 또는 CPU 아키텍처(시스템의 구조, 동작 등을 정의하는 개념적인 모형) 출력
+
 ```
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/utsname.h>
+#include <unistd.h>
 
-void print_os_info() {
+int main(int argc, char *argv[]) {
+    int option;
     struct utsname os_info; //시스템 정보를 확인하는 함수 제공
 
-    if (uname(&os_info) == -1) {
-        printf("Error getting OS information.\n");
-        return;
+    while ((option = getopt(argc, argv, "rvmo")) != -1) { //"rvmo"안에 동일한 문자가 있어서 option으로 리턴
+        switch (option) {
+            case 'r':
+                if (uname(&os_info) == -1) {
+                    perror("uname");
+                    return 1;
+                }
+                printf("%s\n", os_info.release);
+                break;
+            case 'v':
+                if (uname(&os_info) == -1) {
+                    perror("uname");
+                    return 1;
+                }
+                printf("%s\n", os_info.version);
+                break;
+            case 'm':
+                if (uname(&os_info) == -1) {
+                    perror("uname");
+                    return 1;
+                }
+                printf("%s\n", os_info.machine);
+                break;
+            case 'o':
+                if (uname(&os_info) == -1) {
+                    perror("uname");
+                    return 1;
+                }
+                printf("%s\n", os_info.sysname);
+                break;
+            default:
+                printf("Usage: %s [-r|-v|-m|-o]\n", argv[0]);
+                return 1;
+        }
     }
 
-    printf("%s\n", os_info.sysname);
-}
-
-int main() {
-    print_os_info();
-    return 0;
-}
-```
-![image](https://github.com/imeline/sys_linux_command/assets/128706341/8595c2cc-7fea-4688-9298-eca07d9c91fc)
-
-## uname -n
-시스템이나 네트워크 노드의 이름 출력
-```
-#include <stdio.h>
-#include <sys/utsname.h>
-
-int main() {
-    struct utsname os_info;
-
-    if (uname(&os_info) == -1) {
-        printf("Error getting OS information.\n");
-        return 1;
+    if (argc == 1) {
+        // 옵션이 지정되지 않은 경우 -o 옵션과 동일하게 동작
+        if (uname(&os_info) == -1) {
+            perror("uname");
+            return 1;
+        }
+        printf("%s\n", os_info.sysname);
     }
-
-    printf("%s\n", os_info.nodename);
-    //시스템의 이름이나 네트워크 노드의 이름 
-    //지금은 시스템이 네트웨크에 연결되있기 때문에 시스템 이름
-
-    return 0;
-}
-```
-![image](https://github.com/imeline/sys_linux_command/assets/128706341/343c5a44-20d6-4166-bed7-2582d279260b)
-
-## uname -r
-커널의 릴리즈 버전을 출력
-- 커널의 새로운 기능, 버그 수정, 보안 패치 등이 포함된 최신 버전을 확인하고 적용할 수 있다.
-```
-#include <stdio.h>
-#include <sys/utsname.h>
-
-int main() {
-    struct utsname os_info;
-
-    if (uname(&os_info) == -1) {
-        printf("Error getting OS information.\n");
-        return 1;
-    }
-
-    printf("%s\n", os_info.release);
 
     return 0;
 }
 ```
-![image](https://github.com/imeline/sys_linux_command/assets/128706341/ec00476d-f63a-46c3-91b8-3146a3385b69)
+![image](https://github.com/imeline/sys_linux_command/assets/128706341/0db17ae4-edff-4327-81e3-55b965f98502)
